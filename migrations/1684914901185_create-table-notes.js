@@ -10,7 +10,7 @@ exports.up = pgm => {
         },
         title: {
             type : 'TEXT',
-            notNuul: true,
+            notNull: true,
         },
         body: {
             type : 'TEXT',
