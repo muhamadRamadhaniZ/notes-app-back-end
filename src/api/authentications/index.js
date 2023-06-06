@@ -4,7 +4,7 @@ const routes = require('./routes');
 
 module.exports = {
   name: 'authentications',
-  versio: '1.0.0',
+  version: '1.0.0',
   register: async (server, {
     authenticationsService,
     usersService,
