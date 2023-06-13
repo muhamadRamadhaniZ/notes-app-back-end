@@ -22,6 +22,14 @@ const collaborations = require('./api/collaborations');
 const CollaborationsValidator = require('./validator/collaborations');
 const CollaborationsService = require('./service/postgres/CollaborationsService');
 
+// Exports
+const _exports = require('./api/exports');
+const ExportsValidator = require('./validator/exports');
+const ProducerService = require('./service/rabbitmq/ProducerService');
+ 
+
+
+
 const init = async () => {
   const collaborationsService = new CollaborationsService();
   const notesService = new NotesService(collaborationsService);
@@ -36,7 +44,6 @@ const init = async () => {
       },
     },
   });
-
   // registrasi plugin eksternal
   await server.register([
     {
@@ -90,6 +97,13 @@ const init = async () => {
         collaborationsService,
         notesService,
         validator: CollaborationsValidator,
+      },
+    },
+    {
+      plugin: _exports,
+      options: {
+        service: ProducerService,
+        validator: ExportsValidator,
       },
     },
   ]);
