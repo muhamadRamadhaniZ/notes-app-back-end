@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable import/no-extraneous-dependencies */
 require('dotenv').config();
 const Hapi = require('@hapi/hapi');
@@ -31,7 +32,7 @@ const ExportsValidator = require('./validator/exports');
 const ProducerService = require('./service/rabbitmq/ProducerService');
 
 // uploads
-const StorageService = require('./service/storage/StorageService');
+const StorageService = require('./service/S3/StorageService');
 const uploads = require('./api/uploads');
 const UploadsValidator = require('./validator/uploads');
 
@@ -40,7 +41,8 @@ const init = async () => {
   const notesService = new NotesService(collaborationsService);
   const usersService = new UsersService();
   const authenticationsService = new AuthenticationsService();
-  const storageService = new StorageService(path.resolve(__dirname, './api/uploads/file/images'));
+  // const storageService = new StorageService(path.resolve(__dirname, './api/uploads/file/images'));
+  const storageService = new StorageService();
   const server = Hapi.server({
     port: process.env.PORT,
     host: process.env.HOST,
