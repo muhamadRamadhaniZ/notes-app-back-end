@@ -1,4 +1,5 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
+/* eslint linebreak-style: ["error", "windows"] */
 const amqp = require('amqplib');
 
 const ProducerService = {

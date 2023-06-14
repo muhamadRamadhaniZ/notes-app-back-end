@@ -1,7 +1,10 @@
+/* eslint-disable import/no-extraneous-dependencies */
 require('dotenv').config();
 const Hapi = require('@hapi/hapi');
-// eslint-disable-next-line import/no-extraneous-dependencies
 const Jwt = require('@hapi/jwt');
+const Inert = require('@hapi/inert');
+const path = require('path');
+
 // notes
 const notes = require('./api/notes');
 const NotesService = require('./service/postgres/NotesService');
@@ -16,25 +19,28 @@ const authentications = require('./api/authentications');
 const AuthenticationsService = require('./service/postgres/AuthenticationsService');
 const TokenManager = require('./tokenize/TokenManager');
 const AuthenticationsValidator = require('./validator/authentications');
-
 // collaborations
 const collaborations = require('./api/collaborations');
 const CollaborationsValidator = require('./validator/collaborations');
 const CollaborationsService = require('./service/postgres/CollaborationsService');
 
 // Exports
+// eslint-disable-next-line no-underscore-dangle
 const _exports = require('./api/exports');
 const ExportsValidator = require('./validator/exports');
 const ProducerService = require('./service/rabbitmq/ProducerService');
- 
 
-
+// uploads
+const StorageService = require('./service/storage/StorageService');
+const uploads = require('./api/uploads');
+const UploadsValidator = require('./validator/uploads');
 
 const init = async () => {
   const collaborationsService = new CollaborationsService();
   const notesService = new NotesService(collaborationsService);
   const usersService = new UsersService();
   const authenticationsService = new AuthenticationsService();
+  const storageService = new StorageService(path.resolve(__dirname, './api/uploads/file/images'));
   const server = Hapi.server({
     port: process.env.PORT,
     host: process.env.HOST,
@@ -48,6 +54,9 @@ const init = async () => {
   await server.register([
     {
       plugin: Jwt,
+    },
+    {
+      plugin: Inert,
     },
   ]);
 
@@ -104,6 +113,13 @@ const init = async () => {
       options: {
         service: ProducerService,
         validator: ExportsValidator,
+      },
+    },
+    {
+      plugin: uploads,
+      options: {
+        service: storageService,
+        validator: UploadsValidator,
       },
     },
   ]);
